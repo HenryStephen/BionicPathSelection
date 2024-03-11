@@ -21,6 +21,24 @@ bionic_prototype_list.sort()
 method_list.sort()
 multifunction_list.sort()
 
+ordered_multifunction_list = ["Antifogging", "Self-cleaning", "Antireflective", "Antibacterial", "Anti-icing",
+                              "Antiwetting", "Large FOV", "Fast motion detection", "Structural color",
+                              "Droplet directional migration", "Anti-drag", "Water collection",
+                              "Self-propelled actuator"]
+other_multifunction_list = [x for x in multifunction_list if x not in ordered_multifunction_list]
+ordered_multifunction_list.extend(other_multifunction_list)
+
+
+def show_res_link(row_idx):
+    res_link = df.iloc[row_idx]['Res link']
+    st.sidebar.info(f'Resource Link: {res_link}')
+
+
+def show_bionic_prototype_content(row_idx):
+    bionic_prototype = df.iloc[row_idx]['Bionic prototype']
+    st.sidebar.info(f'Bionic prototype is: {bionic_prototype}')
+
+
 with st.sidebar:
     st.slider(
         label="Search results limit",
@@ -34,8 +52,8 @@ with st.sidebar:
 
     st.multiselect(
         label="Display columns",
-        options=["Bionic prototype", "Multifunction", "Method", "Materials", "Res"],
-        default=["Bionic prototype", "Multifunction", "Method", "Materials", "Res"],
+        options=["Bionic prototype", "Multifunction", "Method", "Materials", "Res link"],
+        default=["Bionic prototype", "Multifunction", "Method", "Materials", "Res link"],
         help="Select columns to display in the search results",
         key="display_columns",
     )
@@ -44,7 +62,7 @@ st.title("Bionic Path Selection")
 
 st.multiselect(
     label="Multifunction",
-    options=multifunction_list,
+    options=ordered_multifunction_list,
     default=[],
     help="Select the multifunction to display in the search results",
     placeholder="Select the multifunction to display in the search results",
@@ -92,5 +110,14 @@ if search:
     filtered_df = filtered_df[filtered_df["Method"].apply(lambda x: any(method in x for method in method_option))] \
         if (len(method_option) > 0 and not st.session_state.disabled and not filtered_df.empty) \
         else filtered_df
+    # Reset the index
+    filtered_df = filtered_df.reset_index(drop=True)
 
-    st.dataframe(filtered_df[st.session_state.display_columns].head(st.session_state.limit))
+    st.dataframe(
+        filtered_df[st.session_state.display_columns].head(st.session_state.limit),
+        column_config={
+            "Res link": st.column_config.LinkColumn(
+                "Resource", display_text=None
+            )
+        }
+    )
