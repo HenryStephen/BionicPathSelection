@@ -107,6 +107,7 @@ if search:
         else filtered_df
     # Reset the index
     filtered_df = filtered_df.reset_index(drop=True)
+    filtered_df.index = range(1, len(filtered_df)+1)
 
     st.dataframe(
         filtered_df[st.session_state.display_columns].head(st.session_state.limit),
