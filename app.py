@@ -28,12 +28,12 @@ ordered_multifunction_list = ["Antifogging", "Self-cleaning", "Antireflective", 
 other_multifunction_list = [x for x in multifunction_list if x not in ordered_multifunction_list]
 ordered_multifunction_list.extend(other_multifunction_list)
 
-
+# Not use
 def show_res_link(row_idx):
     res_link = df.iloc[row_idx]['Res link']
     st.sidebar.info(f'Resource Link: {res_link}')
 
-
+# Draw the canvas
 with st.sidebar:
     st.slider(
         label="Search results limit",
@@ -59,9 +59,10 @@ st.multiselect(
     label="Multifunction",
     options=ordered_multifunction_list,
     default=[],
-    help="Select the multifunction to display in the search results",
-    placeholder="Select the multifunction to display in the search results",
-    key="multifunction_option"
+    help="Select the multifunction to display in the search results (Maximum is 2)",
+    placeholder="Select the multifunction to display in the search results (Maximum is 2)",
+    key="multifunction_option",
+    max_selections=2
 )
 
 st.session_state.disabled = False if len(st.session_state.multifunction_option) > 0 else True
